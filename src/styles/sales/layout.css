@@ -1,0 +1,194 @@
+/* 전체 컨테이너 레이아웃 */
+.sales-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 1rem;
+  padding-top: 0; /* 상단 패딩 제거 */
+  margin-top: -10px; /* 위로 끌어올림 */
+}
+
+.page-title {
+  font-size: 1.5rem;
+  color: #1f2937;
+  margin-bottom: 1rem; /* 간격 축소 */
+  font-weight: 600;
+}
+
+/* 날짜 선택기 상단에 위치하도록 수정 */
+.sales-header {
+  display: flex;
+  justify-content: space-between; /* flex-end에서 변경 */
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.date-selector label {
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.date-selector input {
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background-color: #f9fafb;
+}
+
+.date-selector input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* 날짜 선택기 스타일 조정 */
+.date-picker-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.date-label {
+  font-size: 16px;
+  font-weight: 500;
+  margin-right: 12px;
+  color: #374151;
+}
+
+.date-input {
+  min-width: 180px; /* 너비를 늘림 (기존 값보다 더 넓게) */
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 15px;
+  color: #1f2937;
+  background-color: white;
+  cursor: pointer;
+}
+
+.date-input:focus {
+  border-color: #4f46e5;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* 판매 목록 영역 - 높이 증가 */
+.sales-items-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 400px; /* 최소 높이 증가 */
+}
+
+.sales-items-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.sales-items-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* 상단 총액 표시 더 눈에 띄게 */
+.total-display {
+  font-size: 1rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.total-display strong {
+  color: #4f46e5;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+/* 판매 거래 목록 컨테이너 - 높이 증가 */
+.transactions-container {
+  flex: 1;
+  overflow: auto;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  max-height: 500px; /* 최대 높이 설정 */
+}
+
+/* 하단에 있는 중복된 총판매액 숨기기 */
+.transactions-summary {
+  display: none; /* 하단 총액 표시 숨김 */
+}
+
+/* 메시지 표시 영역 */
+.sales-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  flex-shrink: 0;
+}
+
+.auto-save-status {
+  font-size: 0.75rem;
+  color: #10b981;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(16, 185, 129, 0.1);
+  border-radius: 0.25rem;
+}
+
+/* 로딩 메시지 */
+.loading-message {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* 에러 메시지 */
+.error-message {
+  padding: 0.75rem 1rem;
+  background-color: #fee2e2;
+  border-left: 4px solid #ef4444;
+  color: #b91c1c;
+  margin-bottom: 1rem;
+  border-radius: 0.375rem;
+}
+
+/* 판매 입력 버튼 */
+.add-sale-button {
+  padding: 0.625rem 1.25rem;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-sale-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.add-sale-button:hover {
+  background-color: #4338ca;
+}

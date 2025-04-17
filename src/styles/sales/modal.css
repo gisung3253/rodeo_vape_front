@@ -1,0 +1,176 @@
+/* 판매 모달 스타일 - 스크롤 없이 완벽한 레이아웃 */
+.sales-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.sales-modal-content {
+  background-color: white;
+  border-radius: 16px;
+  width: 800px;  /* 고정 너비 */
+  height: 680px; /* 고정 높이 - 약간 증가 */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* 판매 모달 헤더 */
+.sales-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: white;
+  height: 60px; /* 고정 높이 - 약간 감소 */
+  flex-shrink: 0;
+}
+
+.sales-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.sales-modal-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.sales-modal-close:hover {
+  background-color: #f3f4f6;
+}
+
+/* 판매 모달 본문 - 절대 스크롤 없게 */
+.sales-modal-body {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow: hidden; /* 스크롤 제거 */
+  height: 540px; /* 높이 약간 줄임 - 모달 하단에 여유 공간 확보 */
+  justify-content: space-between; /* 내용을 위아래로 분산 배치 */
+}
+
+/* 입력 폼 영역 */
+.sales-modal-form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 15px; /* 약간 줄임 */
+  height: 65px; /* 고정 높이 - 약간 줄임 */
+  flex-shrink: 0;
+}
+
+.sales-modal-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.sales-modal-form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.sales-modal-form-select,
+.sales-modal-form-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  height: 38px; /* 약간 줄임 */
+  font-size: 14px;
+}
+
+.sales-modal-form-select:focus,
+.sales-modal-form-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.sales-modal-add-item {
+  background-color: #4f46e5;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 0 16px;
+  cursor: pointer;
+  align-self: flex-end;
+  height: 38px; /* 높이 조정 */
+  width: 100px;
+}
+
+.sales-modal-add-item:hover {
+  background-color: #4338ca;
+}
+
+/* 푸터 영역 */
+.sales-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 24px; /* 패딩 증가 */
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  gap: 12px;
+  height: 70px; /* 높이 증가 */
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.sales-modal-cancel-button {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: white;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 80px;
+}
+
+.sales-modal-cancel-button:hover {
+  background-color: #f3f4f6;
+}
+
+.sales-modal-complete-button {
+  padding: 8px 16px;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100px;
+}
+
+.sales-modal-complete-button:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.sales-modal-complete-button:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}

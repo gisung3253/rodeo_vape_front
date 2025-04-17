@@ -1,0 +1,160 @@
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* 거래 카드 */
+.transaction-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-bottom: 0.5rem;
+}
+
+/* 거래 헤더 */
+.transaction-header {
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9fafb;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.transaction-header:hover {
+  background-color: #f3f4f6;
+}
+
+.transaction-summary {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* 헤더 내 텍스트 */
+.transaction-main-info {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: #374151;
+}
+
+.transaction-first-item {
+  font-size: 0.9375rem;
+}
+
+.transaction-more-items {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  font-weight: normal;
+}
+
+/* 거래 메타 정보 */
+.transaction-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.transaction-time {
+  color: #6b7280;
+}
+
+.transaction-payment {
+  color: #4b5563;
+}
+
+.transaction-amount {
+  font-weight: 500;
+  color: #4f46e5;
+}
+
+.transaction-toggle {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* 거래 세부 정보 테이블 */
+.transaction-details {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+
+.transaction-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.transaction-items-table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.transaction-items-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.transaction-items-table tr:last-child td {
+  border-bottom: none;
+}
+
+.item-total-label {
+  text-align: right;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.item-total-amount {
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+.transaction-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+/* 삭제 버튼 */
+.delete-button {
+  padding: 0.375rem 0.75rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-button:hover:not(:disabled) {
+  background-color: #dc2626;
+}
+
+.delete-button:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.empty-transactions {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: #6b7280;
+}

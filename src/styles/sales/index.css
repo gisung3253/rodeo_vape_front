@@ -1,0 +1,9 @@
+/* 판매 관리 스타일 메인 파일 */
+
+/* 각 기능별 CSS 파일 임포트 */
+@import './layout.css';
+@import './form.css';
+@import './transactions.css';
+@import './modal.css';
+@import './modal-content.css';
+@import './responsive.css';
