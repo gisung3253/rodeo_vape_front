@@ -21,7 +21,9 @@ function isAxiosError(error: unknown): error is AxiosError {
 // 재고 상품 목록 가져오기
 export const fetchInventoryItems = async (): Promise<Product[]> => {
   try {
-    const response = await axios.get('http://localhost:5002/api/inventory', {
+    // import.meta.env.VITE_API_URL를 사용하여 API URL 구성
+    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+    const response = await axios.get(`${baseUrl}/api/inventory`, {
       headers: getAuthHeaders()
     });
     return response.data;

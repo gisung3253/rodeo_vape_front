@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import '../styles/Login.css';
-
-// API URL
-const API_URL = 'http://localhost:5002/api/auth/login';
 
 function Login() {
   const navigate = useNavigate();
@@ -34,14 +31,11 @@ function Login() {
     
     try {
       // 로그인 API 호출
-      const response = await axios.post(API_URL, { username, password });
+      const response = await api.post('/api/auth/login', { username, password });
       
       // 응답에서 토큰 추출 및 저장
       const { token } = response.data;
       localStorage.setItem('token', token);
-      
-      // axios 기본 헤더에 토큰 설정
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       // 메인 페이지로 리다이렉트
       navigate('/sales');

@@ -27,6 +27,9 @@ interface MonthlyApiResponse {
   summary: MonthlySummary;
 }
 
+// 환경변수에서 API URL 가져오기
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+
 // 숫자 포맷팅 함수 - 천 단위 구분자 추가 및 앞 0 제거
 const formatNumber = (num: number | string): string => {
   // 문자열이 전달된 경우 먼저 숫자로 변환
@@ -55,7 +58,7 @@ function Monthly() {
     const fetchMonthlyData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<MonthlyApiResponse>('http://localhost:5002/api/monthly', {
+        const response = await axios.get<MonthlyApiResponse>(`${API_URL}/api/monthly`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

@@ -10,9 +10,11 @@ interface MemoItem {
   color: string;    // 이 필드는 프론트엔드에서만 관리
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+
 // API 호출에 사용할 axios 인스턴스 생성
 const api = axios.create({
-  baseURL: 'http://localhost:5002',
+    baseURL: API_URL,
 });
 
 // 요청 보내기 전에 토큰 확인 및 추가하는 인터셉터

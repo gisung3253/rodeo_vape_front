@@ -1,20 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import '../styles/Inventory.css';
-
-// API 호출에 사용할 axios 인스턴스 생성
-const api = axios.create({
-  baseURL: 'http://localhost:5002',
-});
-
-// 요청 보내기 전에 토큰 추가하는 인터셉터
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
 
 // 제품 타입 정의
 interface InventoryItem {
@@ -47,7 +33,6 @@ function Inventory() {
     const fetchInventory = async () => {
       setIsLoading(true);
       try {
-        // api 인스턴스 사용
         const response = await api.get('/api/inventory');
         setInventory(response.data);
         setError(null);

@@ -24,9 +24,12 @@ const CATEGORY_ORDER = [
   "기타"
 ];
 
+// 환경변수에서 API URL 가져오기
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+
 // API 호출에 사용할 axios 인스턴스 생성
 const api = axios.create({
-  baseURL: 'http://localhost:5002',
+  baseURL: API_URL,
 });
 
 // 요청 보내기 전에 토큰 추가하는 인터셉터

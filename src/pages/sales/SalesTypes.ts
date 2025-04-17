@@ -46,7 +46,7 @@ export const cardCompanies = [
 ];
 
 // API 기본 URL 설정
-export const API_URL = 'http://localhost:5002/api/sales';
+export const API_URL = `${import.meta.env.VITE_API_URL}/api/sales`;
 
 // 기본 신규 아이템 초기값
 export const initialNewItem = {
