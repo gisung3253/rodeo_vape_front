@@ -14,16 +14,6 @@ interface InventoryItem {
 // 모달 유형 정의
 type ModalType = 'add' | 'edit' | 'delete' | null;
 
-// 카테고리 순서 정의 (재고확인 페이지와 동일하게)
-const CATEGORY_ORDER = [
-  "입호흡액상",
-  "폐호흡액상",
-  "폐호흡기기",
-  "입호흡기기",
-  "코일팟", 
-  "기타"
-];
-
 // 환경변수에서 API URL 가져오기
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
 
@@ -83,31 +73,23 @@ function InventoryManagement() {
   // 카테고리 목록 가져오기
   const fetchCategories = async () => {
     try {
-      // API에서 카테고리를 가져오는 대신 고정된 순서로 정의
-      setCategories(CATEGORY_ORDER);
-    } catch (err) {
-      console.error('카테고리 로딩 오류:', err);
+      const response = await api.get('/api/inventory-manage/categories');
+      setCategories(response.data);
+    } catch (err: any) {
+      console.error('카테고리 조회 오류:', err);
     }
   };
   
   // 모든 재고 항목 가져오기
   const fetchInventoryItems = async () => {
     setIsLoading(true);
-    setError(null);
-    
     try {
-      const response = await api.get('/api/inventory');
+      const response = await api.get('/api/inventory-manage');
       setInventoryItems(response.data);
+      setError(null);
     } catch (err: any) {
-      // 401 에러 처리
-      if (err.response && err.response.status === 401) {
-        localStorage.removeItem('token');
-        window.location.href = '/login';
-        return;
-      }
-      
-      console.error('재고 데이터 로딩 오류:', err);
-      setError('재고 데이터를 불러오는데 실패했습니다.');
+      console.error('재고 목록 조회 오류:', err);
+      setError('재고 목록을 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -192,15 +174,9 @@ function InventoryManagement() {
   
   // 신규 물품 추가
   const handleAddItem = async () => {
-    if (!formData.name || !formData.category) {
-      alert('상품명과 카테고리는 필수 입력 항목입니다.');
-      return;
-    }
-    
     try {
-      await api.post('/api/inventory-manage', formData);
-      await fetchInventoryItems(); // 재고 목록 갱신
-      
+      await api.post('/api/inventory-manage/item', formData);
+      await fetchInventoryItems();
       closeModal();
       alert('새 상품이 추가되었습니다.');
     } catch (err: any) {
@@ -212,39 +188,28 @@ function InventoryManagement() {
   // 재고 변경
   const handleUpdateItem = async () => {
     if (!selectedItem) return;
-    
-    if (!formData.name || !formData.category) {
-      alert('상품명과 카테고리는 필수 입력 항목입니다.');
-      return;
-    }
-    
     try {
-      await api.put(`/api/inventory-manage/${selectedItem.id}`, formData);
-      await fetchInventoryItems(); // 재고 목록 갱신
-      
+      await api.put(`/api/inventory-manage/item/${selectedItem.id}`, formData);
+      await fetchInventoryItems();
       closeModal();
-      alert('상품 정보가 업데이트되었습니다.');
+      alert('상품 정보가 수정되었습니다.');
     } catch (err: any) {
-      console.error('상품 업데이트 오류:', err);
-      alert(err.response?.data?.error || '상품 정보 업데이트에 실패했습니다.');
+      console.error('상품 수정 오류:', err);
+      alert(err.response?.data?.error || '상품 수정에 실패했습니다.');
     }
   };
   
   // 재고 삭제
   const handleDeleteItem = async () => {
     if (!selectedItem) return;
-    
-    if (window.confirm(`정말로 "${selectedItem.name}" 상품을 삭제하시겠습니까?`)) {
-      try {
-        await api.delete(`/api/inventory-manage/${selectedItem.id}`);
-        await fetchInventoryItems(); // 재고 목록 갱신
-        
-        closeModal();
-        alert('상품이 삭제되었습니다.');
-      } catch (err: any) {
-        console.error('상품 삭제 오류:', err);
-        alert(err.response?.data?.error || '상품 삭제에 실패했습니다.');
-      }
+    try {
+      await api.delete(`/api/inventory-manage/item/${selectedItem.id}`);
+      await fetchInventoryItems();
+      closeModal();
+      alert('상품이 삭제되었습니다.');
+    } catch (err: any) {
+      console.error('상품 삭제 오류:', err);
+      alert(err.response?.data?.error || '상품 삭제에 실패했습니다.');
     }
   };
   
