@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import '../styles/Monthly.css';
 
-// API 응답 타입 정의
 interface MonthlyDataItem {
   year: number;
   month: number;
@@ -27,18 +26,10 @@ interface MonthlyApiResponse {
   summary: MonthlySummary;
 }
 
-// 환경변수에서 API URL 가져오기
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
-
-// 숫자 포맷팅 함수 - 천 단위 구분자 추가 및 앞 0 제거
 const formatNumber = (num: number | string): string => {
-  // 문자열이 전달된 경우 먼저 숫자로 변환
   const numValue = typeof num === 'string' ? parseFloat(num) : num;
-  
-  // NaN이거나 0인 경우 "0원" 반환
   if (isNaN(numValue) || numValue === 0) return "0원";
   
-  // 천 단위 구분자 추가
   return numValue.toLocaleString('ko-KR') + '원';
 };
 
@@ -46,23 +37,17 @@ function Monthly() {
   const [activeTab, setActiveTab] = useState('chart');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // 데이터 상태 관리
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
   const [totalSales, setTotalSales] = useState(0);
   const [currentMonthSales, setCurrentMonthSales] = useState(0);
   const [topMonth, setTopMonth] = useState<{year: number, month: number, yearMonth: string, sales: number} | null>(null);
 
-  // API에서 월별 매출 데이터 가져오기
+  // 월별 매출 데이터
   useEffect(() => {
     const fetchMonthlyData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<MonthlyApiResponse>(`${API_URL}/api/monthly`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+        const response = await api.get<MonthlyApiResponse>('/api/monthly');
         
         // 데이터 변환 (sales 속성 추가)
         const formattedData = response.data.monthlyData.map((item, index) => ({
