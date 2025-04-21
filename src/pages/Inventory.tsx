@@ -13,7 +13,6 @@ interface InventoryItem {
 
 // 재고 부족 기준 설정 함수
 const isLowStock = (item: InventoryItem): boolean => {
-  // 코일팟은 10개 이하, 나머지는 모두 5개 이하일 때 재고 부족
   if (item.category === "코일팟") {
     return item.quantity <= 10;
   } else {
@@ -28,7 +27,7 @@ function Inventory() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   
-  // API에서 재고 데이터 가져오기
+  // 재고 데이터 가져오기
   useEffect(() => {
     const fetchInventory = async () => {
       setIsLoading(true);
@@ -37,20 +36,11 @@ function Inventory() {
         setInventory(response.data);
         setError(null);
       } catch (err: any) {
-        // 401 에러 처리
-        if (err.response && err.response.status === 401) {
-          // 토큰 제거 후 로그인 페이지로 리디렉션
-          localStorage.removeItem('token');
-          window.location.href = '/login';
-          return;
-        }
-        
         setError('재고 정보를 불러오는데 실패했습니다.');
       } finally {
         setIsLoading(false);
       }
-    };
-    
+    }; 
     fetchInventory();
   }, []);
   
@@ -80,7 +70,7 @@ function Inventory() {
     return items;
   }, [activeCategory, searchTerm, lowStockItems, inventory]);
   
-  // 모든 카테고리 (재고부족은 맨 마지막에 배치)
+  // 모든 카테고리
   const categories = ["all", "입호흡액상", "폐호흡액상", "폐호흡기기", "입호흡기기", "코일팟", "기타", "low-stock"];
   
   // 카테고리별 이름 표시
