@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import api from '../utils/api';
 import '../styles/InventoryManagement.css';
+import '../styles/Inventory.css';
 
 // 제품 타입 정의 (회사명 제거)
 interface InventoryItem {
@@ -11,42 +12,27 @@ interface InventoryItem {
   quantity: number;
 }
 
+// 재고 부족 기준 설정 함수
+const isLowStock = (item: InventoryItem): boolean => {
+  if (item.category === "코일팟") {
+    return item.quantity <= 10;
+  } else {
+    return item.quantity <= 5;
+  }
+};
+
 // 모달 유형 정의
 type ModalType = 'add' | 'edit' | 'delete' | null;
 
-// 환경변수에서 API URL 가져오기
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5002';
-
-// API 호출에 사용할 axios 인스턴스 생성
-const api = axios.create({
-  baseURL: API_URL,
-});
-
-// 요청 보내기 전에 토큰 추가하는 인터셉터
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
 function InventoryManagement() {
-  // 상품 목록 상태
-  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
-  
-  // 검색 및 필터링 상태
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("all");
-  
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   // 모달 관련 상태
   const [modalType, setModalType] = useState<ModalType>(null);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
-  
-  // 로딩 및 에러 상태
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  
   // 새 상품 또는 수정된 상품 정보
   const [formData, setFormData] = useState<Omit<InventoryItem, 'id'>>({
     name: '',
@@ -55,50 +41,26 @@ function InventoryManagement() {
     quantity: 0
   });
   
-  // 모달 외부 클릭 감지를 위한 ref
-  const modalRef = useRef<HTMLDivElement>(null);
-  
-  // 카테고리 목록
-  const [categories, setCategories] = useState<string[]>([]);
-  
-  // 재고 부족 기준 설정 함수
-  const isLowStock = (item: InventoryItem): boolean => {
-    if (item.category === "코일팟") {
-      return item.quantity <= 10;
-    } else {
-      return item.quantity <= 5;
-    }
-  };
-  
-  // 카테고리 목록 가져오기
-  const fetchCategories = async () => {
-    try {
-      const response = await api.get('/api/inventory-manage/categories');
-      setCategories(response.data);
-    } catch (err: any) {
-      console.error('카테고리 조회 오류:', err);
-    }
-  };
-  
-  // 모든 재고 항목 가져오기
-  const fetchInventoryItems = async () => {
+  // 재고 데이터 가져오기
+  const fetchInventory = async () => {
     setIsLoading(true);
     try {
-      const response = await api.get('/api/inventory-manage');
-      setInventoryItems(response.data);
+      const response = await api.get('/api/inventory');
+      setInventory(response.data);
       setError(null);
     } catch (err: any) {
-      console.error('재고 목록 조회 오류:', err);
-      setError('재고 목록을 불러오는데 실패했습니다.');
+      setError('재고 정보를 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
-  };
+  }; 
+  
+  // 모달 외부 클릭 감지를 위한 ref
+  const modalRef = useRef<HTMLDivElement>(null);
   
   // 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
-    fetchCategories(); // 고정된 카테고리 목록 로드
-    fetchInventoryItems();
+    fetchInventory();
     
     // 모달 외부 클릭 이벤트 처리
     const handleClickOutside = (event: MouseEvent) => {
@@ -113,25 +75,43 @@ function InventoryManagement() {
     };
   }, []);
   
-  // 재고 부족 상품 필터링
-  const lowStockItems = inventoryItems.filter(item => isLowStock(item));
+   // 재고 부족 상품 필터링
+    const lowStockItems = useMemo(() => {
+      return inventory.filter(item => isLowStock(item));
+    }, [inventory]);
+    
+    // 카테고리별 필터링
+    const filteredItems = useMemo(() => {
+      let items = inventory;
+      
+      // 카테고리 필터링
+      if (activeCategory === "low-stock") {
+        items = lowStockItems;
+      } else if (activeCategory !== "all") {
+        items = items.filter(item => item.category === activeCategory);
+      }
+      
+      // 검색어 필터링 (상품명만)
+      if (searchTerm) {
+        items = items.filter(item => 
+          item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+      
+      return items;
+    }, [activeCategory, searchTerm, lowStockItems, inventory]);
+
+    // 모든 카테고리
+  const categories = ["all", "입호흡액상", "폐호흡액상", "폐호흡기기", "입호흡기기", "코일팟", "기타", "low-stock"];
   
-  // 카테고리별, 검색어별 필터링
-  const filteredItems = inventoryItems.filter(item => {
-    // 카테고리 필터링
-    if (activeCategory === "low-stock") {
-      if (!isLowStock(item)) return false;
-    } else if (activeCategory !== "all" && item.category !== activeCategory) {
-      return false;
+  // 카테고리별 이름 표시
+  const getCategoryDisplayName = (category: string): string => {
+    switch(category) {
+      case "all": return "전체";
+      case "low-stock": return "재고부족";
+      default: return category;
     }
-    
-    // 검색어 필터링
-    if (searchTerm) {
-      return item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    }
-    
-    return true;
-  });
+  };
   
   // 모달 열기
   const openModal = (type: ModalType, item?: InventoryItem) => {
@@ -176,7 +156,7 @@ function InventoryManagement() {
   const handleAddItem = async () => {
     try {
       await api.post('/api/inventory-manage/item', formData);
-      await fetchInventoryItems();
+      await fetchInventory();
       closeModal();
       alert('새 상품이 추가되었습니다.');
     } catch (err: any) {
@@ -190,7 +170,7 @@ function InventoryManagement() {
     if (!selectedItem) return;
     try {
       await api.put(`/api/inventory-manage/item/${selectedItem.id}`, formData);
-      await fetchInventoryItems();
+      await fetchInventory();
       closeModal();
       alert('상품 정보가 수정되었습니다.');
     } catch (err: any) {
@@ -204,7 +184,7 @@ function InventoryManagement() {
     if (!selectedItem) return;
     try {
       await api.delete(`/api/inventory-manage/item/${selectedItem.id}`);
-      await fetchInventoryItems();
+      await fetchInventory();
       closeModal();
       alert('상품이 삭제되었습니다.');
     } catch (err: any) {
@@ -214,7 +194,7 @@ function InventoryManagement() {
   };
   
   return (
-    <div className="inventory-management-container">
+    <div className="inventory-container">
       <h2 className="page-title">재고관리</h2>
       
       {/* 오류 메시지 표시 */}
@@ -241,35 +221,17 @@ function InventoryManagement() {
         </button>
       </div>
       
-      {/* 카테고리 탭 - 고정된 순서로 표시 */}
       <div className="category-tabs">
-        <button
-          key="all"
-          className={`category-tab ${activeCategory === 'all' ? 'active' : ''}`}
-          onClick={() => setActiveCategory('all')}
-        >
-          전체
-        </button>
-        
-        {/* 카테고리 목록을 고정된 순서대로 표시 */}
-        {categories.map(category => (
-          <button
-            key={category}
-            className={`category-tab ${activeCategory === category ? 'active' : ''}`}
-            onClick={() => setActiveCategory(category)}
-          >
-            {category}
-          </button>
-        ))}
-        
-        <button
-          key="low-stock"
-          className={`category-tab warning-tab ${activeCategory === 'low-stock' ? 'active' : ''}`}
-          onClick={() => setActiveCategory('low-stock')}
-        >
-          재고부족
-          <span className="badge">{lowStockItems.length}</span>
-        </button>
+          {categories.map(category => (
+            <button
+              key={category}
+              className={`category-tab ${activeCategory === category ? 'active' : ''} ${category === 'low-stock' ? 'warning-tab' : ''}`}
+              onClick={() => setActiveCategory(category)}
+            >
+              {getCategoryDisplayName(category)}
+              {category === 'low-stock' && <span className="badge">{lowStockItems.length}</span>}
+            </button>
+          ))}
       </div>
       
       {/* 로딩 표시 */}
@@ -370,9 +332,12 @@ function InventoryManagement() {
                       required
                     >
                       <option value="">카테고리 선택</option>
-                      {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
+                      {categories
+                        .filter(category => category !== "all" && category !== "low-stock")
+                        .map(category => (
+                          <option key={category} value={category}>{getCategoryDisplayName(category)}</option>
+                        ))
+                      }
                     </select>
                   </div>
                   
